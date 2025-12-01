@@ -47,16 +47,18 @@ graph LR
 
 *   **Real-Time Ingestion**: Consumes high-frequency telemetry via **MQTT**
 *   **Kafka Streaming**: Decoupled pipeline for scalability
+*   **Persistent Storage**: **PostgreSQL** for historical data analysis
 *   **Live Map Visualization**: Tracks vehicles on an interactive map using **Leaflet.js**
 *   **Instant Updates**: Uses **WebSockets (STOMP)** for zero-latency updates
 *   **Intelligent Alerting**: Flags **Speeding**, **Overheating**, **Low Fuel**
-*   **REST APIs**: 8 endpoints for monitoring fleet, Kafka, and system health
+*   **REST APIs**: 11 endpoints for monitoring fleet, Kafka, system health, and history
 *   **IoT Simulator**: Built-in simulator for realistic traffic patterns
 
 ## 🛠️ Tech Stack
 
 *   **Backend**: Java 17, Spring Boot 3.2
 *   **Messaging**: Apache Kafka, Spring Integration MQTT, Eclipse Paho
+*   **Database**: PostgreSQL 15 (Docker)
 *   **Real-Time**: Spring WebSocket (STOMP)
 *   **Frontend**: Vanilla JavaScript, Leaflet.js (Maps), Chart.js (Analytics)
 *   **Infrastructure**: Docker, Docker Compose

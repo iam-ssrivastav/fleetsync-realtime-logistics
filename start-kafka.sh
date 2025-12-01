@@ -9,4 +9,9 @@ docker-compose up -d
 echo "⏳ Waiting for Kafka to be ready (15 seconds)..."
 sleep 15
 
-echo "✅ Kafka is ready! You can now run: mvn spring-boot:run"
+echo "✅ Infrastructure is ready!"
+echo "   - Zookeeper: localhost:2181"
+echo "   - Kafka: localhost:9093"
+echo "   - PostgreSQL: localhost:5432"
+echo ""
+echo "You can now run: mvn spring-boot:run"
