@@ -2,7 +2,7 @@
 
 **FleetSync** is an enterprise-grade, real-time logistics monitoring system demonstrating **Event-Driven Architecture** with **Apache Kafka** and **WebSockets**. Track moving assets (trucks) instantly using MQTT, Kafka streaming, and live dashboards.
 
-![FleetSync Architecture](architecture_visual.png)
+<img src="fleetsync_architecture_visual.jpg" width="600" alt="FleetSync Architecture">
 
 ## 🏗️ Architecture
 
