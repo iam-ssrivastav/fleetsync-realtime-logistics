@@ -30,17 +30,24 @@ graph LR
         Processor -->|Alert Logic| AlertEngine{Check Thresholds}
         AlertEngine -->|Speed > 80| Alert[Generate Alert]
         Processor -->|Processed Data| Stream[WebSocket Publisher]
+        Processor -->|Persist| DB_Service[Database Consumer]
+    end
+
+    subgraph "Storage Layer"
+        DB_Service -->|Save| Postgres[(PostgreSQL)]
     end
 
     subgraph "Frontend (Client)"
         Stream -->|STOMP / WebSocket| Dashboard[Live Dashboard]
         Dashboard -->|Leaflet.js| Map[Live Map]
         Dashboard -->|Chart.js| Chart[Speed Analytics]
+        Dashboard -->|REST API| History[Historical Data]
     end
 
     style Broker fill:#f9f,stroke:#333,stroke-width:2px
     style Processor fill:#bbf,stroke:#333,stroke-width:2px
     style Dashboard fill:#bfb,stroke:#333,stroke-width:2px
+    style Postgres fill:#dbf,stroke:#333,stroke-width:2px
 ```
 
 ## 🚀 Features
@@ -221,6 +228,56 @@ docker exec -it kafka kafka-console-consumer \
 ```bash
 # Real-time monitoring
 watch -n 2 'curl -s http://localhost:8080/api/fleet/stats | python3 -m json.tool'
+```
+
+## 🧪 Verification & Outputs
+
+### 1. End-to-End Pipeline Verification
+![Kafka Verification](/Users/shivamsrivastav/.gemini/antigravity/brain/9a4830f5-9df9-40a6-8560-d73b2969e3ac/kafka_end_to_end_1764615342267.png)
+
+### 2. API Output Examples
+
+**Fleet Stats (Real-Time):**
+```json
+{
+    "activeTrucks": 5,
+    "averageSpeed": 72.3,
+    "averageEngineTemp": 85.4,
+    "averageFuelLevel": 66.2
+}
+```
+
+**Kafka Consumer Status:**
+```json
+{
+    "groupId": "fleetsync-dashboard",
+    "state": "Stable",
+    "currentOffset": 1806,
+    "members": 1
+}
+```
+
+**Historical Data (PostgreSQL):**
+```json
+{
+    "data": [
+        {
+            "truckId": "TRUCK-001",
+            "speed": 65.3,
+            "timestamp": 1764615599362
+        }
+    ],
+    "count": 100
+}
+```
+
+### 3. Database Verification
+```sql
+fleetsync=# SELECT COUNT(*) FROM truck_telemetry;
+ count 
+-------
+  1806
+(1 row)
 ```
 
 ## 🎯 Use Cases
