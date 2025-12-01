@@ -119,7 +119,7 @@ cd fleetsync-realtime-logistics
 ## 🧪 Verification Results
 
 ### End-to-End Test
-![Kafka Verification](/Users/shivamsrivastav/.gemini/antigravity/brain/9a4830f5-9df9-40a6-8560-d73b2969e3ac/kafka_end_to_end_1764615342267.png)
+![Kafka Verification](kafka_verification.png)
 
 ### API Test Results
 ```json

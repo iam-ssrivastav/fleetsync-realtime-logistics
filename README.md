@@ -233,7 +233,7 @@ watch -n 2 'curl -s http://localhost:8080/api/fleet/stats | python3 -m json.tool
 ## 🧪 Verification & Outputs
 
 ### 1. End-to-End Pipeline Verification
-![Kafka Verification](/Users/shivamsrivastav/.gemini/antigravity/brain/9a4830f5-9df9-40a6-8560-d73b2969e3ac/kafka_end_to_end_1764615342267.png)
+![Kafka Verification](kafka_verification.png)
 
 ### 2. API Output Examples
 
