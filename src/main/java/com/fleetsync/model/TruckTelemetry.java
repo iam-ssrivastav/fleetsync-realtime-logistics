@@ -1,5 +1,8 @@
 package com.fleetsync.model;
 
+/**
+ * @author Shivam Srivastav
+ */
 public class TruckTelemetry {
     private String truckId;
     private double latitude;

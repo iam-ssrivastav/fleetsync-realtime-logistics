@@ -14,6 +14,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+/**
+ * @author Shivam Srivastav
+ */
 @Component
 public class TruckSimulator {
 

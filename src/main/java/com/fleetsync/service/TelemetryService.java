@@ -12,6 +12,9 @@ import org.springframework.stereotype.Service;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * @author Shivam Srivastav
+ */
 @Service
 public class TelemetryService {
 

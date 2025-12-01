@@ -16,6 +16,9 @@ import org.springframework.messaging.MessageHandler;
 
 import java.util.UUID;
 
+/**
+ * @author Shivam Srivastav
+ */
 @Configuration
 public class MqttConfig {
 

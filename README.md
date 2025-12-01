@@ -79,6 +79,10 @@ src/main/java/com/fleetsync
 └── simulator/       # IoT Device Simulator
 ```
 
+## 👨‍💻 Author
+
+**Shivam Srivastav**
+
 ## 📝 License
 
 This project is licensed under the MIT License.
