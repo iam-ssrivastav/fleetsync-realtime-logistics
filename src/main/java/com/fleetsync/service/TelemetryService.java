@@ -5,6 +5,8 @@ import com.fleetsync.model.TruckTelemetry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.integration.annotation.ServiceActivator;
+import org.springframework.integration.mqtt.support.MqttHeaders;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
@@ -21,59 +23,62 @@ public class TelemetryService {
     private static final Logger log = LoggerFactory.getLogger(TelemetryService.class);
 
     private final SimpMessagingTemplate messagingTemplate;
-    private final ObjectMapper objectMapper = new ObjectMapper();
+    private final ObjectMapper objectMapper;
+    private final KafkaTemplate<String, Object> kafkaTemplate;
 
-    public TelemetryService(SimpMessagingTemplate messagingTemplate) {
+    public TelemetryService(SimpMessagingTemplate messagingTemplate, ObjectMapper objectMapper,
+            KafkaTemplate<String, Object> kafkaTemplate) {
         this.messagingTemplate = messagingTemplate;
+        this.objectMapper = objectMapper;
+        this.kafkaTemplate = kafkaTemplate;
     }
 
     @ServiceActivator(inputChannel = "mqttInputChannel")
-    public void handleMessage(Message<String> message) {
-        try {
-            String payload = message.getPayload();
-            // log.info("Received MQTT message: {}", payload); // Verbose logging
+    public void handleMessage(Message<?> message) {
+        String topic = (String) message.getHeaders().get(MqttHeaders.RECEIVED_TOPIC);
+        String payload = (String) message.getPayload();
 
+        try {
             TruckTelemetry telemetry = objectMapper.readValue(payload, TruckTelemetry.class);
 
-            // Broadcast telemetry to dashboard
-            messagingTemplate.convertAndSend("/topic/telemetry", telemetry);
+            // 1. Send to Kafka (The "Pipeline")
+            kafkaTemplate.send("fleet-telemetry", telemetry.getTruckId(), telemetry);
 
-            // Check for alerts
+            // 2. Check for Alerts (Still done here for simplicity, or could be a separate
+            // consumer)
             checkForAlerts(telemetry);
 
         } catch (Exception e) {
-            log.error("Error processing MQTT message", e);
+            log.error("Error processing message", e);
         }
     }
 
     private void checkForAlerts(TruckTelemetry telemetry) {
+        java.util.List<String> alerts = new java.util.ArrayList<>();
+
         if (telemetry.getSpeed() > 80) {
-            sendAlert(telemetry.getTruckId(), "SPEEDING",
-                    "Truck " + telemetry.getTruckId() + " is speeding at " + String.format("%.1f", telemetry.getSpeed())
-                            + " mph!");
+            alerts.add("SPEEDING");
         }
-
         if (telemetry.getEngineTemp() > 100) {
-            sendAlert(telemetry.getTruckId(), "OVERHEATING",
-                    "Truck " + telemetry.getTruckId() + " engine temp is critical: "
-                            + String.format("%.1f", telemetry.getEngineTemp()) + "°C");
+            alerts.add("OVERHEATING");
         }
-
         if (telemetry.getFuelLevel() < 10) {
-            sendAlert(telemetry.getTruckId(), "LOW_FUEL",
-                    "Truck " + telemetry.getTruckId() + " has low fuel: "
-                            + String.format("%.1f", telemetry.getFuelLevel()) + "%");
+            alerts.add("LOW FUEL");
         }
-    }
 
-    private void sendAlert(String truckId, String type, String message) {
-        Map<String, Object> alert = new HashMap<>();
-        alert.put("truckId", truckId);
-        alert.put("type", type);
-        alert.put("message", message);
-        alert.put("timestamp", System.currentTimeMillis());
+        if (!alerts.isEmpty()) {
+            Map<String, Object> alertMessage = new HashMap<>();
+            alertMessage.put("truckId", telemetry.getTruckId());
+            alertMessage.put("alerts", alerts);
+            alertMessage.put("timestamp", System.currentTimeMillis());
 
-        messagingTemplate.convertAndSend("/topic/alerts", alert);
-        log.warn("ALERT: {}", message);
+            // Cache for REST API
+            String alertText = telemetry.getTruckId() + ": " + String.join(", ", alerts);
+            com.fleetsync.controller.FleetController.addAlert(alertText);
+
+            // Broadcast to WebSocket
+            messagingTemplate.convertAndSend("/topic/alerts", alertMessage);
+            log.warn("Alert for {}: {}", telemetry.getTruckId(), alerts);
+        }
     }
 }

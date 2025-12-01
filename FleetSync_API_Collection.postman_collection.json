@@ -1,0 +1,203 @@
+{
+    "info": {
+        "_postman_id": "fleetsync-api-collection",
+        "name": "FleetSync - Real-Time Logistics API",
+        "description": "Complete API collection for FleetSync real-time fleet tracking system with Kafka integration",
+        "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+    },
+    "item": [
+        {
+            "name": "Fleet APIs",
+            "item": [
+                {
+                    "name": "Get Fleet Statistics",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/api/fleet/stats",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "fleet",
+                                "stats"
+                            ]
+                        },
+                        "description": "Returns real-time aggregated statistics for the entire fleet including average speed, temperature, and fuel levels."
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Get All Trucks",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/api/fleet/trucks",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "fleet",
+                                "trucks"
+                            ]
+                        },
+                        "description": "Returns current telemetry data for all active trucks in the fleet."
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Get Recent Alerts",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/api/fleet/alerts",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "fleet",
+                                "alerts"
+                            ]
+                        },
+                        "description": "Returns the 50 most recent alerts (speeding, overheating, low fuel)."
+                    },
+                    "response": []
+                }
+            ],
+            "description": "APIs for accessing real-time fleet data and statistics"
+        },
+        {
+            "name": "Kafka Metrics",
+            "item": [
+                {
+                    "name": "Get Kafka Consumer Metrics",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/api/metrics/kafka/consumer",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "metrics",
+                                "kafka",
+                                "consumer"
+                            ]
+                        },
+                        "description": "Returns detailed metrics about the Kafka consumer group including state, offset, and member details."
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Get Kafka Topics",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/api/metrics/kafka/topics",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "metrics",
+                                "kafka",
+                                "topics"
+                            ]
+                        },
+                        "description": "Lists all Kafka topics in the cluster."
+                    },
+                    "response": []
+                }
+            ],
+            "description": "APIs for monitoring Kafka streaming pipeline"
+        },
+        {
+            "name": "Health Checks",
+            "item": [
+                {
+                    "name": "Check Kafka Health",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/api/health/kafka",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "health",
+                                "kafka"
+                            ]
+                        },
+                        "description": "Verifies Kafka connectivity and returns cluster information."
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Check System Health",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/api/health/system",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "health",
+                                "system"
+                            ]
+                        },
+                        "description": "Returns overall system health status for all components (MQTT, WebSocket, Kafka)."
+                    },
+                    "response": []
+                }
+            ],
+            "description": "Health check endpoints for monitoring system status"
+        },
+        {
+            "name": "System Metrics",
+            "item": [
+                {
+                    "name": "Get Real-Time System Metrics",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/api/metrics/realtime",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "metrics",
+                                "realtime"
+                            ]
+                        },
+                        "description": "Returns JVM and system metrics including memory usage, CPU count, and uptime."
+                    },
+                    "response": []
+                }
+            ],
+            "description": "System performance and resource metrics"
+        }
+    ],
+    "variable": [
+        {
+            "key": "base_url",
+            "value": "http://localhost:8080",
+            "type": "string"
+        }
+    ]
+}
