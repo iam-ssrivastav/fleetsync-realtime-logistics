@@ -74,7 +74,6 @@ public class TelemetryService {
 
             // Cache for REST API
             String alertText = telemetry.getTruckId() + ": " + String.join(", ", alerts);
-            com.fleetsync.controller.FleetController.addAlert(alertText);
 
             // Broadcast to WebSocket
             messagingTemplate.convertAndSend("/topic/alerts", alertMessage);

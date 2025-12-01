@@ -2,6 +2,11 @@ package com.fleetsync.controller;
 
 import com.fleetsync.entity.TruckTelemetryEntity;
 import com.fleetsync.repository.TelemetryRepository;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
@@ -13,62 +18,60 @@ import java.util.Map;
  */
 @RestController
 @RequestMapping("/api/history")
+@Tag(name = "Historical Data", description = "APIs for querying historical telemetry data from PostgreSQL")
 public class HistoryController {
 
-    private final TelemetryRepository telemetryRepository;
+    private final TelemetryRepository repository;
 
-    public HistoryController(TelemetryRepository telemetryRepository) {
-        this.telemetryRepository = telemetryRepository;
+    public HistoryController(TelemetryRepository repository) {
+        this.repository = repository;
     }
 
     @GetMapping("/telemetry")
-    public Map<String, Object> getHistoricalTelemetry(
-            @RequestParam(required = false) Long from,
-            @RequestParam(required = false) Long to,
-            @RequestParam(defaultValue = "100") int limit) {
+    @Operation(summary = "Get Historical Telemetry", description = "Retrieve past telemetry data with optional time range filters.")
+    public Map<String, Object> getHistory(
+            @Parameter(description = "Start timestamp (Unix ms)") @RequestParam(required = false) Long from,
+            @Parameter(description = "End timestamp (Unix ms)") @RequestParam(required = false) Long to,
+            @Parameter(description = "Max records to return") @RequestParam(defaultValue = "100") int limit) {
 
-        Map<String, Object> response = new HashMap<>();
         List<TruckTelemetryEntity> data;
 
         if (from != null && to != null) {
-            data = telemetryRepository.findByTimestampBetween(from, to);
+            data = repository.findByTimestampBetween(from, to,
+                    PageRequest.of(0, limit, Sort.by(Sort.Direction.DESC, "timestamp")));
         } else {
-            data = telemetryRepository.findTop100ByOrderByTimestampDesc();
+            data = repository.findAll(PageRequest.of(0, limit, Sort.by(Sort.Direction.DESC, "timestamp"))).getContent();
         }
 
-        response.put("data", data);
+        Map<String, Object> response = new HashMap<>();
         response.put("count", data.size());
-        response.put("totalRecords", telemetryRepository.countAllTelemetry());
+        response.put("data", data);
 
         return response;
     }
 
     @GetMapping("/truck/{truckId}")
+    @Operation(summary = "Get Truck History", description = "Retrieve historical path data for a specific truck.")
     public Map<String, Object> getTruckHistory(
-            @PathVariable String truckId,
-            @RequestParam(required = false) Long from,
-            @RequestParam(required = false) Long to) {
+            @Parameter(description = "Truck ID (e.g., TRUCK-001)") @PathVariable String truckId,
+            @Parameter(description = "Max records to return") @RequestParam(defaultValue = "100") int limit) {
+
+        List<TruckTelemetryEntity> data = repository.findByTruckId(truckId,
+                PageRequest.of(0, limit, Sort.by(Sort.Direction.DESC, "timestamp")));
 
         Map<String, Object> response = new HashMap<>();
-        List<TruckTelemetryEntity> data;
-
-        if (from != null && to != null) {
-            data = telemetryRepository.findByTruckIdAndTimestampBetween(truckId, from, to);
-        } else {
-            data = telemetryRepository.findByTruckIdOrderByTimestampDesc(truckId);
-        }
-
         response.put("truckId", truckId);
-        response.put("data", data);
         response.put("count", data.size());
+        response.put("data", data);
 
         return response;
     }
 
     @GetMapping("/stats")
-    public Map<String, Object> getDatabaseStats() {
+    @Operation(summary = "Get Database Stats", description = "Returns statistics about the historical database.")
+    public Map<String, Object> getStats() {
         Map<String, Object> stats = new HashMap<>();
-        stats.put("totalRecords", telemetryRepository.countAllTelemetry());
+        stats.put("totalRecords", repository.count());
         stats.put("database", "PostgreSQL");
         stats.put("status", "Connected");
         return stats;

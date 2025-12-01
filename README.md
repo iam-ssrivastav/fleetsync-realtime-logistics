@@ -112,6 +112,11 @@ You should see:
 
 FleetSync provides 8 REST endpoints for monitoring:
 
+### Access Points
+- **Dashboard**: http://localhost:8080
+- **Swagger UI**: http://localhost:8080/swagger-ui.html
+- **API Example**: http://localhost:8080/api/fleet/stats
+
 ### Fleet APIs
 ```bash
 # Get fleet statistics
@@ -121,7 +126,6 @@ curl http://localhost:8080/api/fleet/stats
 curl http://localhost:8080/api/fleet/trucks
 
 # Get recent alerts
-curl http://localhost:8080/api/fleet/alerts
 ```
 
 ### Kafka Metrics
