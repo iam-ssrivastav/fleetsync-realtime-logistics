@@ -2,7 +2,7 @@
     "info": {
         "_postman_id": "fleetsync-api-collection",
         "name": "FleetSync - Real-Time Logistics API",
-        "description": "Complete API collection for FleetSync real-time fleet tracking system with Kafka integration",
+        "description": "Complete API collection for FleetSync real-time fleet tracking system with Kafka integration and PostgreSQL history",
         "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
     },
     "item": [
@@ -71,6 +71,92 @@
                 }
             ],
             "description": "APIs for accessing real-time fleet data and statistics"
+        },
+        {
+            "name": "Historical Data",
+            "item": [
+                {
+                    "name": "Get Historical Telemetry",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/api/history/telemetry?limit=100",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "history",
+                                "telemetry"
+                            ],
+                            "query": [
+                                {
+                                    "key": "limit",
+                                    "value": "100",
+                                    "description": "Number of records to retrieve"
+                                },
+                                {
+                                    "key": "from",
+                                    "value": "",
+                                    "description": "Start timestamp (Unix ms)",
+                                    "disabled": true
+                                },
+                                {
+                                    "key": "to",
+                                    "value": "",
+                                    "description": "End timestamp (Unix ms)",
+                                    "disabled": true
+                                }
+                            ]
+                        },
+                        "description": "Returns historical telemetry data from PostgreSQL."
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Get Truck History",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/api/history/truck/TRUCK-001",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "history",
+                                "truck",
+                                "TRUCK-001"
+                            ]
+                        },
+                        "description": "Returns historical path data for a specific truck."
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Get Database Stats",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/api/history/stats",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "history",
+                                "stats"
+                            ]
+                        },
+                        "description": "Returns statistics about the historical database."
+                    },
+                    "response": []
+                }
+            ],
+            "description": "APIs for querying historical data from PostgreSQL"
         },
         {
             "name": "Kafka Metrics",
