@@ -6,6 +6,8 @@
 
 The system bridges the gap between low-power IoT devices (Edge) and high-speed web dashboards (User) using a reactive pipeline.
 
+![FleetSync Architecture](architecture_visual.png)
+
 ```mermaid
 graph LR
     subgraph "IoT Edge Layer"

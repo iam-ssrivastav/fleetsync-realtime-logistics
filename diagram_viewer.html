@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Architecture Diagram</title>
+    <script type="module">
+        import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+        mermaid.initialize({ startOnLoad: true });
+    </script>
+</head>
+
+<body>
+    <div class="mermaid">
+        graph LR
+        subgraph "IoT Edge Layer"
+        T1[Truck 1] -->|MQTT| Broker
+        T2[Truck 2] -->|MQTT| Broker
+        T3[Truck 3] -->|MQTT| Broker
+        end
+
+        subgraph "Message Broker"
+        Broker((HiveMQ / Mosquitto))
+        end
+
+        subgraph "Backend Core (Spring Boot)"
+        Broker -->|Subscribe| Ingest[MQTT Inbound Adapter]
+        Ingest -->|Raw JSON| Processor[Telemetry Service]
+        Processor -->|Alert Logic| AlertEngine{Check Thresholds}
+        AlertEngine -->|Speed > 80| Alert[Generate Alert]
+        Processor -->|Processed Data| Stream[WebSocket Publisher]
+        end
+
+        subgraph "Frontend (Client)"
+        Stream -->|STOMP / WebSocket| Dashboard[Live Dashboard]
+        Dashboard -->|Leaflet.js| Map[Live Map]
+        Dashboard -->|Chart.js| Chart[Speed Analytics]
+        end
+
+        style Broker fill:#f9f,stroke:#333,stroke-width:2px
+        style Processor fill:#bbf,stroke:#333,stroke-width:2px
+        style Dashboard fill:#bfb,stroke:#333,stroke-width:2px
+    </div>
+</body>
+
+</html>
